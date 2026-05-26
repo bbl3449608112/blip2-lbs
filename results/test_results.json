@@ -1,0 +1,32 @@
+[
+  {
+    "image_id": "1000268201_693b08cb0e",
+    "image_path": "data\\Images\\1000268201_693b08cb0e.jpg",
+    "ground_truth": "A child in a pink dress is climbing up a set of stairs in an entry way .",
+    "generated": "A man and a woman are walking in a park ."
+  },
+  {
+    "image_id": "1001773457_577c3a7d70",
+    "image_path": "data\\Images\\1001773457_577c3a7d70.jpg",
+    "ground_truth": "A black dog and a spotted dog are fighting",
+    "generated": "A man and a woman are walking in a park ."
+  },
+  {
+    "image_id": "1002674143_1b742ab4b8",
+    "image_path": "data\\Images\\1002674143_1b742ab4b8.jpg",
+    "ground_truth": "A little girl covered in paint sits in front of a painted rainbow with her hands in a bowl .",
+    "generated": "A man and a woman are walking in a park ."
+  },
+  {
+    "image_id": "1003163366_44323f5815",
+    "image_path": "data\\Images\\1003163366_44323f5815.jpg",
+    "ground_truth": "A man lays on a bench while his dog sits by him .",
+    "generated": "A man and a woman are walking in a park ."
+  },
+  {
+    "image_id": "1007129816_e794419615",
+    "image_path": "data\\Images\\1007129816_e794419615.jpg",
+    "ground_truth": "A man in an orange hat starring at something .",
+    "generated": "A man and a woman are walking in a park ."
+  }
+]
