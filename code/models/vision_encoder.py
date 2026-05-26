@@ -25,8 +25,8 @@ class FrozenVisionEncoder(nn.Module):
         self.model_name = model_name
 
         print(f"Loading CLIP vision encoder: {model_name}")
-        self.vision_model = CLIPVisionModel.from_pretrained(model_name)
-        self.image_processor = CLIPImageProcessor.from_pretrained(model_name)
+        self.vision_model = CLIPVisionModel.from_pretrained(model_name, local_files_only=True)
+        self.image_processor = CLIPImageProcessor.from_pretrained(model_name, local_files_only=True)
 
         for param in self.vision_model.parameters():
             param.requires_grad = False

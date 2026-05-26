@@ -24,9 +24,9 @@ class MiniBLIP2(nn.Module):
         self,
         vision_encoder_name: str = "openai/clip-vit-base-patch32",
         language_decoder_name: str = "facebook/opt-125m",
-        num_queries: int = 32,
-        q_former_layers: int = 6,
-        q_former_heads: int = 12,
+        num_queries: int = 16,
+        q_former_layers: int = 2,
+        q_former_heads: int = 4,
         device: str = "cuda" if torch.cuda.is_available() else "cpu"
     ):
         super().__init__()
@@ -112,10 +112,14 @@ class MiniBLIP2(nn.Module):
 
         projected_features = self.projection(query_features)
 
+        # 确保数据类型和语言模型一致
+        projected_features = projected_features.to(self.language_decoder.model.dtype)
+
         outputs = self.language_decoder(
             input_ids=input_ids,
             attention_mask=attention_mask,
-            visual_prefix=projected_features
+            visual_prefix=projected_features,
+            use_grad=True  # 训练时需要梯度
         )
 
         return outputs

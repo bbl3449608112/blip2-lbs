@@ -5,6 +5,7 @@ Frozen Language Decoder
 
 import torch
 import torch.nn as nn
+from typing import Optional
 from transformers import OPTForCausalLM, AutoTokenizer
 
 
@@ -25,8 +26,8 @@ class FrozenLanguageDecoder(nn.Module):
         self.model_name = model_name
 
         print(f"Loading OPT language decoder: {model_name}")
-        self.model = OPTForCausalLM.from_pretrained(model_name)
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        self.model = OPTForCausalLM.from_pretrained(model_name, local_files_only=True)
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name, local_files_only=True)
 
         self.tokenizer.pad_token = self.tokenizer.eos_token
 
@@ -46,10 +47,10 @@ class FrozenLanguageDecoder(nn.Module):
 
     def forward(
         self,
-        input_ids: torch.Tensor,
-        attention_mask: torch.Tensor = None,
-        past_key_values=None,
-        visual_prefix: torch.Tensor = None
+        input_ids: Optional[torch.Tensor] = None,
+        attention_mask: Optional[torch.Tensor] = None,
+        visual_prefix: Optional[torch.Tensor] = None,
+        use_grad: bool = False
     ):
         """
         前向传播
@@ -59,17 +60,22 @@ class FrozenLanguageDecoder(nn.Module):
             attention_mask: [batch_size, seq_len]
             visual_prefix: [batch_size, num_queries, hidden_size]
                           视觉前缀特征
+            use_grad: 是否允许梯度传播（训练时为True，推理时为False）
 
         Returns:
             outputs: 模型输出
         """
-        with torch.no_grad():
+        # 只有在推理时使用 no_grad
+        context_manager = torch.no_grad() if not use_grad else torch.enable_grad()
+        
+        with context_manager:
             if visual_prefix is not None:
                 inputs_embeds = self.model.model.decoder.embed_tokens(input_ids)
-
-                if visual_prefix.size(0) != inputs_embeds.size(0):
-                    visual_prefix = visual_prefix[:inputs_embeds.size(0)]
-
+                
+                # 确保数据类型一致
+                visual_prefix = visual_prefix.to(inputs_embeds.dtype)
+                
+                # 简单版本：假设 visual_prefix 和 inputs_embeds 的 batch size 已经一致
                 inputs_embeds = torch.cat([visual_prefix, inputs_embeds], dim=1)
 
                 if attention_mask is not None:
@@ -84,14 +90,12 @@ class FrozenLanguageDecoder(nn.Module):
                 outputs = self.model(
                     inputs_embeds=inputs_embeds,
                     attention_mask=attention_mask,
-                    past_key_values=past_key_values,
                     return_dict=True
                 )
             else:
                 outputs = self.model(
                     input_ids=input_ids,
                     attention_mask=attention_mask,
-                    past_key_values=past_key_values,
                     return_dict=True
                 )
 

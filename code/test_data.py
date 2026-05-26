@@ -52,7 +52,7 @@ def test_clip_processor():
         from transformers import CLIPProcessor, CLIPModel
 
         print("Loading CLIP model (openai/clip-vit-base-patch32)...")
-        clip_processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
+        clip_processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32", local_files_only=True)
         print("✓ CLIP processor loaded successfully!")
 
         return clip_processor
@@ -81,8 +81,7 @@ def test_dataset_loading(clip_processor):
 
         sample = dataset[0]
         print(f"  - Sample image shape: {sample['image'].shape}")
-        print(f"  - Number of captions: {len(sample['captions'])}")
-        print(f"  - Sample caption: {sample['captions'][0][:50]}...")
+        print(f"  - Sample caption: {sample['caption'][:50]}...")
 
         return dataset
 
@@ -111,7 +110,7 @@ def test_dataloader(dataset):
         print(f"✓ DataLoader working!")
         print(f"  - Batch keys: {list(batch.keys())}")
         print(f"  - Batch image shape: {batch['image'].shape}")
-        print(f"  - Number of captions in batch: {len(batch['captions'])}")
+        print(f"  - First caption in batch: {batch['caption'][0][:50]}...")
 
         return dataloader
 

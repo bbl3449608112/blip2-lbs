@@ -152,7 +152,7 @@ class Flickr8kDataset(Dataset):
 
         return {
             'image': processed['pixel_values'].squeeze(0),
-            'captions': captions,
+            'caption': captions[0],  # 只返回第一个 caption
             'image_id': image_id,
             'image_path': str(image_path)
         }
@@ -218,8 +218,8 @@ def prepare_flickr8k_data(
         tuple: (train_loader, test_loader, clip_processor)
     """
     print("Loading CLIP model and processor...")
-    clip_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
-    clip_processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
+    clip_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32", local_files_only=True)
+    clip_processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32", local_files_only=True)
 
     images_dir = os.path.join(data_root, "Images")
     captions_file = os.path.join(data_root, "captions.txt")
